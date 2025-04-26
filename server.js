@@ -14,7 +14,10 @@ const taskRoutes = require('./routes/taskRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',  // Your frontend URL
+  credentials: true                 // Allow cookies, auth headers
+}));
 app.use(express.json()); // Parse JSON bodies
 
 // Routes
