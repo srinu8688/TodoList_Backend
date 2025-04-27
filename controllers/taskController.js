@@ -9,6 +9,10 @@ exports.createTask = async (req, res) => {
   const groupId = req.params.groupId;
 
   try {
+    const group = await Group.findOne({ _id: groupId, user: req.user._id });
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found or unauthorized' });
+    }
     const newTask = new Task({
       taskName,
       dueDate,
