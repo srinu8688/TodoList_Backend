@@ -15,29 +15,40 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',  // Your frontend URL
-  credentials: true                 // Allow cookies, auth headers
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
 }));
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method,
+    body: req.body,
+  });
+  res.status(500).json({ message: 'Server Error', error: err.message });
+});
 
-)
-  .then(() => console.log('MongoDB Connectedd'))
-  .catch(err => console.log(err));
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => console.error('MongoDB Connection Error:', err));
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-app.use("/", (req, res) => {
-  res.send("<h1>Welcome to TodoList Page</h1>");
-});
 
+app.use('/', (req, res) => {
+  res.send('<h1>Welcome to TodoList Page</h1>');
+});
