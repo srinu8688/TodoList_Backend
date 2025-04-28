@@ -18,7 +18,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175', // Add your current Vite port
-  'http://localhost:3000', // For Electron dev (optional)
+  'http://localhost:3000',
+  'file://', // For Electron dev (optional)
 ];
 
 app.use(cors({
